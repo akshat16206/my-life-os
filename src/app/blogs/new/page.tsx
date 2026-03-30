@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
 
@@ -8,12 +8,24 @@ export default function NewBlogPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isFeatured, setIsFeatured] = useState(false)
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
+
+  useEffect(() => {
+    // SECURITY GUARD: Check for authentication before showing the editor
+    const authStatus = localStorage.getItem('isLoggedIn')
+    if (authStatus !== 'true') {
+      router.push('/login')
+    } else {
+      setLoading(false)
+    }
+  }, [router])
 
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0
 
   async function saveBlog() {
     if (!title || !content) return
+    
     const { error } = await supabase.from('blogs').insert([
       { 
         title, 
@@ -24,8 +36,14 @@ export default function NewBlogPage() {
     
     if (!error) {
       router.push('/blogs')
+    } else {
+      alert('Error saving research log. Please check your connection.')
+      console.error(error)
     }
   }
+
+  // Prevent flicker while checking auth
+  if (loading) return <div className="p-20 text-center font-serif italic text-gray-400">Verifying Identity...</div>
 
   return (
     <div className="max-w-[720px] mx-auto pt-12 pb-24 px-4">
@@ -39,7 +57,6 @@ export default function NewBlogPage() {
         </button>
         
         <div className="flex items-center gap-6">
-          {/* Featured Toggle: Medium Style */}
           <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 cursor-pointer group">
             <input 
               type="checkbox" 

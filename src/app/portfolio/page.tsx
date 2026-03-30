@@ -60,7 +60,16 @@ export default function PortfolioPage() {
     fetchPortfolioData();
   }, []);
 
-  if (loading) return <div className="max-w-[720px] mx-auto pt-20 px-6 italic text-gray-400 font-serif">Syncing research profile...</div>;
+  // Helper to ensure image URLs work correctly
+  const getImageUrl = (url: string | undefined) => {
+    if (!url) return "/my_image.jpg";
+    if (url.includes('dropbox.com')) {
+      return url.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+    }
+    return url;
+  };
+
+  if (loading) return <div className="max-w-[720px] mx-auto pt-20 px-6 italic text-gray-400 font-serif text-center">Syncing research profile...</div>;
 
   return (
     <div className="max-w-[720px] mx-auto pt-8 pb-24">
@@ -79,27 +88,38 @@ export default function PortfolioPage() {
           </div>
         </div>
 
-        {/* Dynamic Profile Photo from Supabase Bucket */}
+        {/* Dynamic Profile Photo */}
         <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-100 flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-500 shadow-sm mx-auto sm:mx-0 bg-gray-50">
           <img 
-            src={profile?.image_url || "/my_image.jpg"} 
+            src={getImageUrl(profile?.image_url)} 
             alt={profile?.full_name || "Profile Photo"} 
             className="w-full h-full object-cover"
             onError={(e) => {
-              // Fallback if bucket URL fails or is empty
               e.currentTarget.src = "/my_image.jpg";
             }}
           />
         </div>
       </header>
 
-      {/* Social & Contact Links */}
+      {/* Social & Contact Links - Fully Dynamic */}
       <div className="flex flex-wrap justify-center sm:justify-start gap-6 mb-16 pb-8 border-b border-gray-100 text-[12px] font-bold uppercase tracking-widest text-gray-400 px-6 sm:px-0">
         <a href="mailto:akshat8036@gmail.com" className="hover:text-[#1a8917] transition-colors">Email</a>
-        {profile?.cv_link && <a href={profile.cv_link} className="hover:text-[#1a8917] transition-colors">CV</a>}
-        <a href={profile?.twitter_url || "https://x.com/akshat8036"} className="hover:text-[#1a8917] transition-colors text-black font-bold">Twitter</a>
-        <a href={profile?.github_url || "https://github.com/akshat16206"} className="hover:text-[#1a8917] transition-colors">GitHub</a>
-        <a href={profile?.linkedin_url || "https://www.linkedin.com/in/hermits/"} className="hover:text-[#1a8917] transition-colors">LinkedIn</a>
+        
+        {profile?.cv_link && (
+          <a href={profile.cv_link} target="_blank" rel="noopener noreferrer" className="hover:text-[#1a8917] transition-colors">CV</a>
+        )}
+        
+        {profile?.github_url && (
+          <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="hover:text-[#1a8917] transition-colors">GitHub</a>
+        )}
+
+        {profile?.linkedin_url && (
+          <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="hover:text-[#1a8917] transition-colors">LinkedIn</a>
+        )}
+
+        {profile?.twitter_url && (
+          <a href={profile.twitter_url} target="_blank" rel="noopener noreferrer" className="hover:text-[#1a8917] transition-colors text-black font-bold">Twitter</a>
+        )}
       </div>
 
       {/* Technical Stack Section */}
@@ -156,7 +176,7 @@ export default function PortfolioPage() {
         <div className="grid gap-10">
           {projects.map((project) => (
             <div key={project.id} className="group border-b border-gray-50 pb-6 last:border-0">
-              <a href={project.link} className="flex justify-between items-center mb-2">
+              <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex justify-between items-center mb-2">
                 <h3 className="text-lg font-bold text-[#191919] group-hover:text-[#1a8917] transition-colors tracking-tight">
                   {project.title}
                 </h3>
