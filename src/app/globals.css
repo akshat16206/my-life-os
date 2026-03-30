@@ -1,3 +1,60 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #191919;
+  --color-medium-green: #1a8917;
+  --color-border-subtle: #f2f2f2;
+}
 
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-geist-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Ensuring the base text size is perfect for reading */
+  font-size: 16px;
+}
+
+/* Medium-style Serif for Titles & Long-form Content */
+.serif-title {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  letter-spacing: -0.02em;
+}
+
+/* Added a secondary serif for body text to make it look like a book */
+.font-serif {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+/* Selection Highlight: That high-end emerald tint */
+::selection {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.btn-medium {
+  background-color: var(--color-medium-green);
+  color: white;
+  border-radius: 99px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-medium:hover {
+  background-color: #156d12;
+  transform: translateY(-1px);
+}
+
+.btn-medium:active {
+  transform: translateY(0);
+}
+
+/* Subtle line for the editorial feel */
+.border-subtle {
+  border-color: var(--color-border-subtle);
+}
